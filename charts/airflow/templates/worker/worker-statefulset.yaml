@@ -79,9 +79,9 @@ spec:
       tolerations:
         {{- toYaml .Values.workers.tolerations | nindent 8 }}
       {{- end }}
-      {{- if .Values.workers.securityContext }}
+      {{- if .Values.workers.podSecurityContext }}
       securityContext:
-        {{- toYaml .Values.workers.securityContext | nindent 8 }}
+        {{- toYaml .Values.workers.podSecurityContext | nindent 8 }}
       {{- end }}
       {{- if .Values.dags.initContainer.enabled }}
       initContainers:
@@ -163,6 +163,10 @@ spec:
                 name: "{{ include "airflow.fullname" . }}-env"
           env:
             {{- include "airflow.mapenvsecrets" . | indent 12 }}
+          {{- if .Values.workers.securityContext }}
+          securityContext:
+            {{- toYaml .Values.workers.securityContext | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: scripts
               mountPath: /home/airflow/scripts
